@@ -1,0 +1,23 @@
+[Unit]
+Description=Dashboard OS (Pi kiosk backend)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Change User / WorkingDirectory to match your Pi account + install path
+User=pi
+WorkingDirectory=/home/pi/dashboard-os
+Environment=NODE_ENV=production
+Environment=NODE_OPTIONS=--max-old-space-size=384
+Environment=DASHBOARD_PI=1
+# Prefer the project-local npm if present, else system npm
+ExecStart=/usr/bin/npm run start:pi
+Restart=on-failure
+RestartSec=5
+# Soft limits help keep Chromium alive on 2GB boards
+MemoryMax=600M
+MemoryHigh=450M
+
+[Install]
+WantedBy=multi-user.target
