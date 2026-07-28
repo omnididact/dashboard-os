@@ -1,51 +1,21 @@
 #!/usr/bin/env bash
-# Run ON the Raspberry Pi after extracting the package
+# One-shot Pi setup: deps + build + optional auto-start on boot
 set -euo pipefail
-cd "$(dirname "$0")/.."
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 
-echo "==> Dashboard OS · Pi installer"
-echo "Working directory: $(pwd)"
+echo "==> Dashboard OS · install"
+echo "    ${ROOT}"
 
-if ! command -v node >/dev/null 2>&1; then
-  echo "Node.js not found. Install Node 22 first:"
-  echo "  curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -"
-  echo "  sudo apt-get install -y nodejs build-essential python3"
-  exit 1
-fi
+bash "$ROOT/scripts/dash.sh" install
 
-NODE_MAJOR="$(node -p "process.versions.node.split('.')[0]")"
-if [[ "$NODE_MAJOR" -lt 20 ]]; then
-  echo "Node 20+ required (found $(node -v))."
-  exit 1
-fi
-
-echo "==> Installing production dependencies (compiles better-sqlite3 for this CPU)…"
-npm ci --omit=dev
-
-# Host Mac may have produced a .next for a different arch — rebuild on Pi is safest
-if [[ "${REBUILD:-1}" == "1" ]]; then
-  echo "==> Building on Pi (native)…"
-  npm run build
+# Auto-enable background service when systemd is available (typical on Pi OS)
+if command -v systemctl >/dev/null 2>&1; then
+  echo ""
+  echo "==> Enabling start-on-boot…"
+  bash "$ROOT/scripts/dash.sh" enable
 else
-  if [[ ! -d .next ]]; then
-    echo "No .next found — building…"
-    npm run build
-  else
-    echo "==> Using packaged .next (set REBUILD=1 to rebuild on Pi)"
-  fi
+  echo ""
+  echo "Install done. Start with:"
+  echo "  ./start"
 fi
-
-mkdir -p data
-
-echo ""
-echo "Install complete."
-echo ""
-echo "Start now:"
-echo "  npm run start:pi"
-echo ""
-echo "Or install systemd (edit User / WorkingDirectory first):"
-echo "  sudo cp deploy/dashboard-os.service /etc/systemd/system/"
-echo "  sudo systemctl daemon-reload"
-echo "  sudo systemctl enable --now dashboard-os"
-echo ""
-echo "Then open:  http://$(hostname -I | awk '{print $1}'):3000"

@@ -87,54 +87,31 @@ The Pi runs the **whole stack**. Phones and the wall browser just open the Pi’
 
 **Full guide:** [`deploy/INSTALL-PI.md`](deploy/INSTALL-PI.md)
 
-### Easiest: git clone
-
-**1. On your Mac** — push once to GitHub (private repo is fine):
+### Easiest: git clone + one install
 
 ```bash
-cd ~/Desktop/Dashboard\ OS
-git remote add origin https://github.com/YOUR_USER/dashboard-os.git
-git push -u origin main
-```
-
-**2. On the Pi** (one-time Node install, then clone):
-
-```bash
+# Pi — one-time system deps
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential python3 git
 
-git clone https://github.com/YOUR_USER/dashboard-os.git
+# clone + install (auto-starts on boot)
+git clone https://github.com/omnididact/dashboard-os.git
 cd dashboard-os
 bash scripts/install-on-pi.sh
-npm run start:pi
 ```
 
-**Updates forever after:**
+Then open `http://PI_IP:3000`.
 
-```bash
-cd ~/dashboard-os && git pull && bash scripts/install-on-pi.sh
-```
+### Day-to-day
 
-No GitHub? Clone over your home network from the Mac (SSH Remote Login on):
+| Command | What |
+|---------|------|
+| `./start` | Run now (foreground) |
+| `./start enable` | Background + start on boot |
+| `./start stop` / `restart` / `status` / `logs` | Control service |
+| `./start update` | `git pull` + rebuild + restart |
 
-```bash
-git clone "YOU@MAC_IP:/Users/Apple/Desktop/Dashboard OS" ~/dashboard-os
-```
-
-| URL | Purpose |
-|-----|---------|
-| `http://PI_IP:3000/` | Wall dashboard |
-| `http://PI_IP:3000/companion` | Phone UI |
-| `http://PI_IP:3000/settings` | Settings |
-
-### Always-on + kiosk
-
-```bash
-sudo cp deploy/dashboard-os.service /etc/systemd/system/
-sudo systemctl enable --now dashboard-os
-```
-
-Chromium kiosk: see [`deploy/INSTALL-PI.md`](deploy/INSTALL-PI.md).
+Full guide: [`deploy/INSTALL-PI.md`](deploy/INSTALL-PI.md)
 
 ## Project layout
 

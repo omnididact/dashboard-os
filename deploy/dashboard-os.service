@@ -1,21 +1,25 @@
+# Generated automatically by `./start enable` with correct User + path.
+# Manual install is no longer needed — prefer:
+#   ./start enable
+#
+# Fallback template (edit User / WorkingDirectory if you copy by hand):
 [Unit]
-Description=Dashboard OS (Pi kiosk backend)
+Description=Dashboard OS
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-# Change User / WorkingDirectory to match your Pi account + install path
 User=pi
 WorkingDirectory=/home/pi/dashboard-os
 Environment=NODE_ENV=production
 Environment=NODE_OPTIONS=--max-old-space-size=384
 Environment=DASHBOARD_PI=1
-# Prefer the project-local npm if present, else system npm
-ExecStart=/usr/bin/npm run start:pi
+Environment=PORT=3000
+Environment=HOST=0.0.0.0
+ExecStart=/home/pi/dashboard-os/start
 Restart=on-failure
 RestartSec=5
-# Soft limits help keep Chromium alive on 2GB boards
 MemoryMax=600M
 MemoryHigh=450M
 
