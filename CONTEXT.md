@@ -17,7 +17,7 @@ A named agent that publishes into modules and reads Wall state. A Bot is not a v
 _Avoid_: Integration, webhook, plugin, user
 
 **Bot token**:
-A revocable secret that identifies one named Bot to the In API and Out API. Minted only in the Companion. Scoped to Module types.
+A revocable secret that identifies one named Bot to the In API and Out API. Minted only in the Companion. Scoped to Module types on both In and Out.
 _Avoid_: API key, PIN, session, webhook secret
 
 **Module**:
@@ -28,6 +28,10 @@ _Avoid_: Widget, card, gadget, block
 A placed Module on the grid, with its own id and config. The same Module can exist more than once.
 _Avoid_: Tile, widget instance
 
+**Place**:
+The human action of putting a Module instance on the grid in edit mode. A Bot cannot Place.
+_Avoid_: Spawn, add, provision
+
 **Live-sourced**:
 A Module instance whose data comes from a fetcher (weather, commute, quote).
 _Avoid_: Auto, system, default source
@@ -37,11 +41,11 @@ A Module instance whose data is the last In API payload for that instance.
 _Avoid_: Manual, override, injected
 
 **In API**:
-The Bot write surface at `/api/bot/in`. A Bot publishes a payload for a Module instance. It does not rearrange the grid unless later granted that privilege.
+The Bot write surface at `/api/bot/in`. A Bot publishes a payload to an existing Module instance. No instance of that type, the publish fails. It does not rearrange the grid.
 _Avoid_: Input API, ingest, webhook
 
 **Out API**:
-The Bot read surface at `/api/bot/out`. A snapshot of layout, Module state, and human actions already taken on the Wall. Not an event log.
+The Bot read surface at `/api/bot/out`. A snapshot of layout, Module state, and human actions already taken on the Wall, filtered to the token’s Module types. Not an event log.
 _Avoid_: Output API, export, scrape, stream
 
 **Publisher**:
@@ -53,11 +57,15 @@ A Module the whole household may see (weather, commute, family events, house nee
 _Avoid_: Shared, public, family widget
 
 **Personal module**:
-A Module only Michael may see. v1 Personal Module is weight. Hidden from family views.
+A Module only Michael may see. v1 Personal Module is weight. Never shown in family views. If the PIN is unset, it renders nowhere.
 _Avoid_: Private widget, secret tile, hidden module
 
+**Me view**:
+The PIN-gated Wall view that may show Personal modules.
+_Avoid_: Private view, Michael mode, secret board
+
 **Report**:
-A Bot-published Module: title, summary, markdown body, optional link, published time, Publisher. Not a chat log.
+A Bot-published Module: title, summary, markdown body, optional link, published time, Publisher. The tile shows the latest plus a short history.
 _Avoid_: Research, article, note, memo
 
 **Weight entry**:
