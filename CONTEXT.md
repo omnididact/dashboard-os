@@ -17,7 +17,7 @@ A named agent that publishes into modules and reads Wall state. A Bot is not a v
 _Avoid_: Integration, webhook, plugin, user
 
 **Bot token**:
-A revocable secret that identifies one named Bot to the In API and Out API.
+A revocable secret that identifies one named Bot to the In API and Out API. Minted only in the Companion. Scoped to Module types.
 _Avoid_: API key, PIN, session, webhook secret
 
 **Module**:
@@ -28,13 +28,21 @@ _Avoid_: Widget, card, gadget, block
 A placed Module on the grid, with its own id and config. The same Module can exist more than once.
 _Avoid_: Tile, widget instance
 
+**Live-sourced**:
+A Module instance whose data comes from a fetcher (weather, commute, quote).
+_Avoid_: Auto, system, default source
+
+**Bot-sourced**:
+A Module instance whose data is the last In API payload for that instance.
+_Avoid_: Manual, override, injected
+
 **In API**:
 The Bot write surface at `/api/bot/in`. A Bot publishes a payload for a Module instance. It does not rearrange the grid unless later granted that privilege.
 _Avoid_: Input API, ingest, webhook
 
 **Out API**:
-The Bot read surface at `/api/bot/out`. A Bot reads layout, Module state, and human actions already taken on the Wall.
-_Avoid_: Output API, export, scrape
+The Bot read surface at `/api/bot/out`. A snapshot of layout, Module state, and human actions already taken on the Wall. Not an event log.
+_Avoid_: Output API, export, scrape, stream
 
 **Publisher**:
 The Bot name shown on a Module instance after a publish.
@@ -49,5 +57,9 @@ A Module only Michael may see. v1 Personal Module is weight. Hidden from family 
 _Avoid_: Private widget, secret tile, hidden module
 
 **Report**:
-A Bot-published Module: a titled write-up with a summary and a body. Not a chat log.
+A Bot-published Module: title, summary, markdown body, optional link, published time, Publisher. Not a chat log.
 _Avoid_: Research, article, note, memo
+
+**Weight entry**:
+One number, a unit, a date, and an optional note. The Module shows recent entries as a sparkline.
+_Avoid_: Weigh-in, measurement, sample
